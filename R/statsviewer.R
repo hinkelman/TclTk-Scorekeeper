@@ -86,6 +86,9 @@ build_statsviewer_tab <- function(parent){
   })
 
   sv$tbl = make_table(right, height = 20)
+  # don't let a wide table grow the window; it scrolls horizontally instead
+  tkconfigure(sv$tbl$frame, width = 700, height = 450)
+  tkgrid.propagate(sv$tbl$frame, FALSE)
   tkgrid(sv$tbl$frame, row = 1, column = 0, sticky = "nsew")
   tkgrid(ttklabel(right, textvariable = sv$status, foreground = col_muted),
          row = 2, column = 0, sticky = "w", pady = c(4, 0))
@@ -249,7 +252,8 @@ draw_stats_table <- function(){
   chars = mapply(function(x, nm) max(nchar(c(fmt_cell_vec(x), nm)), na.rm = TRUE), d, cols)
   widths = ifelse(is_num, 62, pmax(chars * 8 + 16, 60))
   table_set_columns(sv$tbl, setNames(cols, headings), widths = widths,
-                    anchors = ifelse(is_num, "e", "w"), command = on_sort)
+                    anchors = ifelse(is_num, "e", "w"), command = on_sort,
+                    stretch = FALSE)
   table_fill(sv$tbl, d)
   tclvalue(sv$status) = paste(nrow(d), if (nrow(d) == 1) "row" else "rows",
                               "- click a column heading to sort")

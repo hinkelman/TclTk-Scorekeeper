@@ -22,7 +22,10 @@ make_table <- function(parent, height = 10, selectmode = "browse"){
 }
 
 # cols: named vector where names are headings and values are column names in data
-table_set_columns <- function(e, cols, widths = 110, anchors = "w", command = NULL){
+# stretch = FALSE keeps column widths fixed so wide tables scroll horizontally
+# instead of squeezing columns to fit
+table_set_columns <- function(e, cols, widths = 110, anchors = "w", command = NULL,
+                              stretch = TRUE){
   headings = if (is.null(names(cols))) cols else names(cols)
   widths = rep_len(widths, length(cols))
   anchors = rep_len(anchors, length(cols))
@@ -31,7 +34,7 @@ table_set_columns <- function(e, cols, widths = 110, anchors = "w", command = NU
     cmd = if (is.null(command)) "" else local({col = cols[[i]]; function() command(col)})
     tcl(e$tv, "heading", cols[[i]], text = headings[i], anchor = anchors[i], command = cmd)
     tcl(e$tv, "column", cols[[i]], width = widths[i], minwidth = 40, anchor = anchors[i],
-        stretch = TRUE)
+        stretch = stretch)
   }
   e$cols = cols
 }
